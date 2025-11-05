@@ -6,7 +6,7 @@ This repository contains scripts and documentation to support AI Defra Search lo
 
 - Docker
 - Docker Compose
-- [uv](https://docs.astral.sh/uv/getting-started/installation/#installing-uv)
+- uv - [Installation Guide](https://docs.astral.sh/uv/getting-started/installation/#installing-uv)
 - Python 3.13 or higher - We recommend using uv to manage your Python environment.
 - Git
 
@@ -20,9 +20,13 @@ This repository contains scripts and documentation to support AI Defra Search lo
 
 ## Local Development
 
-You will need to clone this repository before running any scripts.
+You will need to clone this repository and sync the environment before running the scripts.
+
+By default, service repositories are cloned into the parent directory of `ai-defra-search-core`. Therefore, we recommend creating a directory specifically for the AI Defra Search project and cloning all repositories into it.
 
 ```bash
+mkdir ai-defra-search
+
 git clone https://github.com/DEFRA/ai-defra-search-core
 
 cd ai-defra-search-core
@@ -39,6 +43,8 @@ To clone the repositories, run the following command:
 ```bash
 uv run task clone
 ```
+
+Your cloned repositories will be located in the `ai-defra-search` directory created in the previous step.
 
 ### Environment Configuration
 This repository uses a `.env` file for environment variable configuration. This must be created for the Docker Compose project to start.
