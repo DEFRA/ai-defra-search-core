@@ -1,8 +1,6 @@
 # AI Defra Search Core
 
-Local development support for orchestrating all AI Defra Search microservices.
-
-This repository contains local development support scripts and documentation for AI Defra Search microservices. It provides a unified development environment that orchestrates all microservices, dependencies, and performs necessary setup tasks.
+This repository contains scripts and documentation to support AI Defra Search local development.
 
 ## Prerequisites
 
