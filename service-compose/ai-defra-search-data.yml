@@ -1,0 +1,57 @@
+x-common-postgres: &common-postgres
+  POSTGRES_HOST: ${AI_DEFRA_SEARCH_POSTGRES_HOST:-postgres}
+  POSTGRES_USER: ${AI_DEFRA_SEARCH_POSTGRES_USER:-postgres}
+  POSTGRES_PORT: ${AI_DEFRA_SEARCH_POSTGRES_PORT:-5432}
+  POSTGRES_PASSWORD: ${AI_DEFRA_SEARCH_POSTGRES_PASSWORD:-ppp}
+  POSTGRES_SSL_MODE: ${AI_DEFRA_SEARCH_POSTGRES_SSL_MODE:-disable}
+  POSTGRES_DB: ${POSTGRES_DB:-ai_defra_search_data}
+services:
+  ai-defra-search-data-db-migrator:
+    build:
+      context: ../../ai-defra-search-data/migrator
+    container_name: ai-defra-search-data-db-migrator
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment: *common-postgres
+    volumes:
+      - ../../ai-defra-search-data/changelog:/liquibase/changelog
+    networks:
+      - ai-defra-search
+
+  ai-defra-search-data:
+    build:
+      context: ../../ai-defra-search-data
+      target: development
+    ports:
+      - 8085:8085
+    links:
+      - "localstack:localstack"
+      - "mongodb:mongodb"
+    depends_on:
+      localstack:
+        condition: service_healthy
+      mongodb:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      ai-defra-search-data-db-migrator:
+        condition: service_completed_successfully
+    env_file:
+      - "../.env"
+    environment:
+      <<: *common-postgres
+      PORT: ${PORT:-8085}
+      MONGO_URI: ${MONGO_URI:-mongodb://mongodb:27017/}
+      HOST: ${HOST:-0.0.0.0}
+      LOCALSTACK_URL: ${LOCALSTACK_URL:-http://localstack:4566}
+      POSTGRES_DB: ${POSTGRES_DB:-ai_defra_search_data}
+    volumes:
+      - ../../ai-defra-search-data/app:/home/nonroot/app
+    develop:
+      watch:
+        - action: rebuild
+          path: ../../ai-defra-search-data/pyproject.toml
+          target: /home/nonroot/pyproject.toml
+    networks:
+      - ai-defra-search

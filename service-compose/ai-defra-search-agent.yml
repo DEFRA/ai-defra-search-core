@@ -1,0 +1,28 @@
+services:
+  ai-defra-search-agent:
+    build:
+      context: ../../ai-defra-search-agent
+      target: development
+    ports:
+      - 8086:8086
+    links:
+      - "mongodb:mongodb"
+    depends_on:
+      mongodb:
+        condition: service_started
+    env_file:
+      - "../.env"
+    environment:
+      PORT: ${PORT:-8086}
+      MONGO_URI: ${MONGO_URI:-mongodb://mongodb:27017/}
+      HOST: ${HOST:-0.0.0.0}
+      LOCALSTACK_URL: ${LOCALSTACK_URL:-http://localstack:4566}
+    volumes:
+      - ../../ai-defra-search-agent/app:/home/nonroot/app
+    develop:
+      watch:
+        - action: rebuild
+          path: ../../ai-defra-search-agent/pyproject.toml
+          target: /home/nonroot/pyproject.toml
+    networks:
+      - ai-defra-search
