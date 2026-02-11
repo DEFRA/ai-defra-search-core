@@ -17,6 +17,7 @@ services:
       MONGO_URI: ${MONGO_URI:-mongodb://mongodb:27017/}
       HOST: ${HOST:-0.0.0.0}
       LOCALSTACK_URL: ${LOCALSTACK_URL:-http://localstack:4566}
+      LOG_CONFIG: logging-dev.json
     volumes:
       - ../../ai-defra-search-agent/app:/home/nonroot/app
     develop:
@@ -24,5 +25,11 @@ services:
         - action: rebuild
           path: ../../ai-defra-search-agent/pyproject.toml
           target: /home/nonroot/pyproject.toml
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=ai-defra-search"
+      - "traefik.http.routers.agent.rule=Host(`agent.localhost`)"
+      - "traefik.http.routers.agent.entrypoints=web"
+      - "traefik.http.services.agent.loadbalancer.server.port=8086"
     networks:
       - ai-defra-search

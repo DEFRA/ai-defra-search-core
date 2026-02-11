@@ -46,6 +46,7 @@ services:
       HOST: ${HOST:-0.0.0.0}
       LOCALSTACK_URL: ${LOCALSTACK_URL:-http://localstack:4566}
       POSTGRES_DB: ${POSTGRES_DB:-ai_defra_search_data}
+      LOG_CONFIG: logging-dev.json
     volumes:
       - ../../ai-defra-search-data/app:/home/nonroot/app
     develop:
@@ -53,5 +54,11 @@ services:
         - action: rebuild
           path: ../../ai-defra-search-data/pyproject.toml
           target: /home/nonroot/pyproject.toml
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=ai-defra-search"
+      - "traefik.http.routers.data.rule=Host(`data.localhost`)"
+      - "traefik.http.routers.data.entrypoints=web"
+      - "traefik.http.services.data.loadbalancer.server.port=8085"
     networks:
       - ai-defra-search

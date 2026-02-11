@@ -20,5 +20,11 @@ services:
       NODE_ENV: development
       REDIS_HOST: redis
       USE_SINGLE_INSTANCE_CACHE: true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=ai-defra-search"
+      - "traefik.http.routers.frontend.rule=Host(`frontend.localhost`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
     networks:
       - ai-defra-search

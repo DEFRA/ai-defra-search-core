@@ -1,0 +1,35 @@
+# Fallback when Docker provider can't reach the daemon (e.g. Docker Desktop on Mac).
+# Same routes as the container labels; backends use compose service names on ai-defra-search network.
+http:
+  routers:
+    frontend:
+      rule: "Host(`frontend.localhost`)"
+      service: frontend
+      entryPoints:
+        - web
+    agent:
+      rule: "Host(`agent.localhost`)"
+      service: agent
+      entryPoints:
+        - web
+    data:
+      rule: "Host(`data.localhost`)"
+      service: data
+      entryPoints:
+        - web
+  services:
+    frontend:
+      loadBalancer:
+        servers:
+          - url: "http://ai-defra-search-frontend:3000"
+        passHostHeader: true
+    agent:
+      loadBalancer:
+        servers:
+          - url: "http://ai-defra-search-agent:8086"
+        passHostHeader: true
+    data:
+      loadBalancer:
+        servers:
+          - url: "http://ai-defra-search-data:8085"
+        passHostHeader: true
