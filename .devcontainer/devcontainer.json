@@ -1,0 +1,35 @@
+{
+  "name": "AI Defra Search Core",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "..",
+    "options": {
+      "platform": "linux/amd64"
+    }
+  },
+  "features": {
+    "ghcr.io/jsburckhardt/devcontainer-features/uv:1": {}
+  },
+  "runArgs": [
+    "-v",
+    "/var/run/docker.sock:/var/run/docker.sock"
+  ],
+  "postCreateCommand": "uv sync --frozen",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "charliermarsh.ruff",
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  },
+  "forwardPorts": [
+    80,
+    8080,
+    4566,
+    5432,
+    6379,
+    27017
+  ]
+}
