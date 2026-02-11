@@ -8,20 +8,20 @@ x-common-postgres: &common-postgres
 services:
   ai-defra-search-data-db-migrator:
     build:
-      context: ../../ai-defra-search-data/migrator
+      context: ../services/ai-defra-search-data/migrator
     container_name: ai-defra-search-data-db-migrator
     depends_on:
       postgres:
         condition: service_healthy
     environment: *common-postgres
     volumes:
-      - ../../ai-defra-search-data/changelog:/liquibase/changelog
+      - ../services/ai-defra-search-data/changelog:/liquibase/changelog
     networks:
       - ai-defra-search
 
   ai-defra-search-data:
     build:
-      context: ../../ai-defra-search-data
+      context: ../services/ai-defra-search-data
       target: development
     ports:
       - 8085:8085
@@ -48,11 +48,11 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-ai_defra_search_data}
       LOG_CONFIG: logging-dev.json
     volumes:
-      - ../../ai-defra-search-data/app:/home/nonroot/app
+      - ../services/ai-defra-search-data/app:/home/nonroot/app
     develop:
       watch:
         - action: rebuild
-          path: ../../ai-defra-search-data/pyproject.toml
+          path: ../services/ai-defra-search-data/pyproject.toml
           target: /home/nonroot/pyproject.toml
     labels:
       - "traefik.enable=true"

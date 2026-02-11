@@ -22,13 +22,8 @@ This repository contains scripts and documentation to support AI Defra Search lo
 
 You will need to clone this repository and sync the environment before running the scripts.
 
-By default, service repositories are cloned into the parent directory of `ai-defra-search-core`. Therefore, we recommend creating a directory specifically for the AI Defra Search project and cloning all repositories into it.
-
 ```bash
-mkdir ai-defra-search
-
 git clone https://github.com/DEFRA/ai-defra-search-core
-
 cd ai-defra-search-core
 
 uv sync --frozen
@@ -36,15 +31,26 @@ uv sync --frozen
 
 ### Cloning Repositories
 
-This project contains a script to clone all the required repositories. This works by checking the service-compose directory for the services and cloning them if they do not exist.
-
-To clone the repositories, run the following command:
+This project contains a script to clone all the required service repositories into `services/`:
 
 ```bash
 uv run task clone
 ```
 
-Your cloned repositories will be located in the `ai-defra-search` directory created in the previous step.
+Layout after clone:
+
+```
+ai-defra-search-core/
+  services/
+    ai-defra-search-frontend/
+    ai-defra-search-agent/
+    ai-defra-search-data/
+  compose.yml
+  traefik/
+  scripts/
+```
+
+VSCode/Cursor users can open `core.code-workspace` to index and refactor across all repos in one view.
 
 ### Environment Configuration
 This repository uses a `.env` file for environment variable configuration. This must be created for the Docker Compose project to start.
@@ -88,7 +94,7 @@ This project contains a number of scripts to streamline local microservice devel
 
 ### Clone
 
-Clones the repositories for each microservice into the parent directory.
+Clones the repositories for each microservice into `services/<repo-name>`. Skips if already exists.
 
 ```bash
 uv run task clone
@@ -96,7 +102,7 @@ uv run task clone
 
 ### Pull
 
-Pulls the latest remote changes for each microservice.
+Pulls the latest remote changes for each microservice in `services/`.
 
 ```bash
 uv run task pull
@@ -104,7 +110,7 @@ uv run task pull
 
 ### Update
 
-Switches to and pulls the latest main branch for each microservice.
+Switches to main and pulls for each microservice in `services/`.
 
 ```bash
 uv run task update

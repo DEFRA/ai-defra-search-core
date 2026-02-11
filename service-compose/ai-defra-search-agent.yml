@@ -1,7 +1,7 @@
 services:
   ai-defra-search-agent:
     build:
-      context: ../../ai-defra-search-agent
+      context: ../services/ai-defra-search-agent
       target: development
     ports:
       - 8086:8086
@@ -19,11 +19,11 @@ services:
       LOCALSTACK_URL: ${LOCALSTACK_URL:-http://localstack:4566}
       LOG_CONFIG: logging-dev.json
     volumes:
-      - ../../ai-defra-search-agent/app:/home/nonroot/app
+      - ../services/ai-defra-search-agent/app:/home/nonroot/app
     develop:
       watch:
         - action: rebuild
-          path: ../../ai-defra-search-agent/pyproject.toml
+          path: ../services/ai-defra-search-agent/pyproject.toml
           target: /home/nonroot/pyproject.toml
     labels:
       - "traefik.enable=true"

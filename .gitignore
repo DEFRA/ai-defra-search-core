@@ -214,3 +214,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Cloned service repos (each has own .git)
+services/

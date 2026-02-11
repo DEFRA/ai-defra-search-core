@@ -2,7 +2,7 @@ services:
   ai-defra-search-frontend:
     build:
       target: development
-      context: ../../ai-defra-search-frontend
+      context: ../services/ai-defra-search-frontend
     ports:
       - '3000:3000'
     links:
@@ -13,8 +13,8 @@ services:
     env_file:
       - "../.env"
     volumes:
-      - ../../ai-defra-search-frontend/src/:/home/node/src
-      - ../../ai-defra-search-frontend/package.json:/home/node/package.json
+      - ../services/ai-defra-search-frontend/src/:/home/node/src
+      - ../services/ai-defra-search-frontend/package.json:/home/node/package.json
     environment:
       PORT: 3000
       NODE_ENV: development
