@@ -2,9 +2,11 @@ include:
   - ./service-compose/ai-defra-search-frontend.yml
   - ./service-compose/ai-defra-search-agent.yml
   - ./service-compose/ai-defra-search-data.yml
+  - ./service-compose/ai-defra-search-journey-tests.yml
+  - ./service-compose/ai-defra-search-chunking-etl.yml
 services:
   traefik:
-    image: traefik:v3.0
+    image: traefik:v3
     command:
       - "--api.insecure=true"
       - "--providers.docker=true"

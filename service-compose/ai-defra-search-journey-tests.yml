@@ -1,0 +1,2 @@
+# Journey/E2E tests - no compose service; runs locally against the stack
+services: {}

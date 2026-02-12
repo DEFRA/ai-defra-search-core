@@ -1,9 +1,23 @@
 {
   "folders": [
-    { "path": "." },
-    { "path": "services/ai-defra-search-frontend" },
-    { "path": "services/ai-defra-search-agent" },
-    { "path": "services/ai-defra-search-data" }
+    {
+      "path": "."
+    },
+    {
+      "path": "services/ai-defra-search-frontend"
+    },
+    {
+      "path": "services/ai-defra-search-agent"
+    },
+    {
+      "path": "services/ai-defra-search-data"
+    },
+    {
+      "path": "services/ai-defra-search-journey-tests"
+    },
+    {
+      "path": "services/ai-defra-search-chunking-etl"
+    }
   ],
   "settings": {
     "files.watcherExclude": {

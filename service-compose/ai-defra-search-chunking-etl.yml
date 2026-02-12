@@ -1,0 +1,2 @@
+# Chunking ETL service - placeholder; configure build/volumes when repo exists
+services: {}
