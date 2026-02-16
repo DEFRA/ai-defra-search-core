@@ -24,14 +24,14 @@ services:
       - ai-defra-search
   localstack:
     image: localstack/localstack:4.9.2
+    # Traefik: http://localstack.localhost. Direct: localhost:4566 (devcontainer: host.docker.internal:4566)
     ports:
-      - 4566:4566
-      - 4510-4559:4510-4559
+      - "4566:4566"
     environment:
       DEBUG: ${DEBUG:-1}
       LS_LOG: WARN
       SERVICES: s3,sqs,sns,firehose
-      LOCALSTACK_HOST: 127.0.0.1
+      LOCALSTACK_HOST: localstack.localhost
       AWS_REGION: ${AI_DEFRA_SEARCH_AWS_REGION:-eu-west-2}
       AWS_DEFAULT_REGION: ${AI_DEFRA_SEARCH_AWS_DEFAULT_REGION:-eu-west-2}
       AWS_ACCESS_KEY_ID: ${AI_DEFRA_SEARCH_AWS_ACCESS_KEY_ID:-test}

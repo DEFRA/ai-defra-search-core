@@ -12,7 +12,8 @@
   },
   "runArgs": [
     "-v",
-    "/var/run/docker.sock:/var/run/docker.sock"
+    "/var/run/docker.sock:/var/run/docker.sock",
+    "--add-host=host.docker.internal:host-gateway"
   ],
   "postCreateCommand": "uv sync --frozen && uv run task clone || true",
   "customizations": {
@@ -24,12 +25,16 @@
       ]
     }
   },
-  "forwardPorts": [
-    80,
-    8080,
-    4566,
-    5432,
-    6379,
-    27017
-  ]
+  // "forwardPorts": [
+  //   80,
+  //   8080,
+  //   4566,
+  //   5432,
+  //   6379,
+  //   27017
+  // ],
+  "containerEnv": {
+    "UV_PROJECT_ENVIRONMENT": ".venv-devcontainer",
+    "LOCALSTACK_ENDPOINT": "http://host.docker.internal:4566"
+  }
 }
