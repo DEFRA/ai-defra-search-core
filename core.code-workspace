@@ -17,6 +17,9 @@
     },
     {
       "path": "services/ai-defra-search-chunking-etl"
+    },
+    {
+      "path": "services/ai-defra-search-perf-tests"
     }
   ],
   "settings": {

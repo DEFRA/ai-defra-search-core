@@ -1,0 +1,29 @@
+# JMeter-based perf tests. Run on-demand: docker compose --profile perf-tests run ai-defra-search-perf-tests
+# Requires: aws s3 mb s3://test-results (against localstack) before first run
+services:
+  ai-defra-search-perf-tests:
+    build:
+      context: ../services/ai-defra-search-perf-tests
+    profiles:
+      - perf-tests
+    volumes:
+      # JMeter writes to /tmp/jmeter-reports first (avoids "Resource busy" when -f cleans a bind mount),
+      # then entrypoint copies results here for local access
+      - ./reports/perf-tests:/opt/perftest/reports
+    depends_on:
+      localstack:
+        condition: service_healthy
+      ai-defra-search-frontend:
+        condition: service_started
+    environment:
+      S3_ENDPOINT: http://localstack:4566
+      RESULTS_OUTPUT_S3_PATH: s3://test-results
+      ENVIRONMENT: local
+      SERVICE_ENDPOINT: ai-defra-search-frontend
+      SERVICE_PORT: "3000"
+      SERVICE_URL_SCHEME: http
+      AWS_ACCESS_KEY_ID: ${AI_DEFRA_SEARCH_AWS_ACCESS_KEY_ID:-test}
+      AWS_SECRET_ACCESS_KEY: ${AI_DEFRA_SEARCH_AWS_SECRET_ACCESS_KEY:-test}
+      AWS_REGION: ${AI_DEFRA_SEARCH_AWS_REGION:-eu-west-2}
+    networks:
+      - ai-defra-search
