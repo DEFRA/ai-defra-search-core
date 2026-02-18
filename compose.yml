@@ -40,6 +40,7 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AI_DEFRA_SEARCH_AWS_SECRET_ACCESS_KEY:-test}
     volumes:
       - ${TMPDIR:-/tmp}/localstack:/var/lib/localstack
+      - ./localstack-init/ready.d:/etc/localstack/init/ready.d:ro
     healthcheck:
       test:
         - CMD

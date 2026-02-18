@@ -8,12 +8,11 @@
     }
   },
   "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
     "ghcr.io/jsburckhardt/devcontainer-features/uv:1": {}
   },
   "initializeCommand": "docker network create ai-defra-search 2>/dev/null || true",
   "runArgs": [
-    "-v",
-    "/var/run/docker.sock:/var/run/docker.sock",
     "--add-host=host.docker.internal:host-gateway",
     "--network=ai-defra-search"
   ],

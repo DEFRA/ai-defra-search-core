@@ -10,6 +10,8 @@ services:
     depends_on:
       mongodb:
         condition: service_started
+      localstack:
+        condition: service_healthy
     env_file:
       - "../.env"
     entrypoint: []
