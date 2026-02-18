@@ -218,3 +218,6 @@ __marimo__/
 # Cloned service repos (each has own .git)
 services/
 service-compose/reports/
+
+.claude
+.vscode

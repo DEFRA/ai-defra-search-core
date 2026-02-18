@@ -39,6 +39,7 @@ services:
         condition: service_completed_successfully
     env_file:
       - "../.env"
+    entrypoint: []
     environment:
       <<: *common-postgres
       PORT: ${PORT:-8085}
@@ -47,6 +48,7 @@ services:
       LOCALSTACK_URL: ${LOCALSTACK_URL:-http://localstack:4566}
       POSTGRES_DB: ${POSTGRES_DB:-ai_defra_search_data}
       LOG_CONFIG: logging-dev.json
+    command: ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "/home/nonroot/.venv/bin/ai-defra-search-data"]
     volumes:
       - ../services/ai-defra-search-data/app:/home/nonroot/app
     develop:

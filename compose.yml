@@ -5,6 +5,7 @@ include:
   - ./service-compose/ai-defra-search-journey-tests.yml
   - ./service-compose/ai-defra-search-chunking-etl.yml
   - ./service-compose/ai-defra-search-perf-tests.yml
+name: ai-defra-search
 services:
   traefik:
     image: traefik:v3
