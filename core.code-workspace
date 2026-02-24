@@ -20,6 +20,9 @@
     },
     {
       "path": "services/ai-defra-search-perf-tests"
+    },
+    {
+      "path": "services/ai-defra-search-knowledge"
     }
   ],
   "settings": {

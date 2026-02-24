@@ -17,6 +17,11 @@ http:
       service: data
       entryPoints:
         - web
+    knowledge:
+      rule: "Host(`knowledge.localhost`)"
+      service: knowledge
+      entryPoints:
+        - web
     localstack:
       rule: "Host(`localstack.localhost`)"
       service: localstack
@@ -37,6 +42,11 @@ http:
       loadBalancer:
         servers:
           - url: "http://ai-defra-search-data:8085"
+        passHostHeader: true
+    knowledge:
+      loadBalancer:
+        servers:
+          - url: "http://ai-defra-search-knowledge:8085"
         passHostHeader: true
     localstack:
       loadBalancer:
