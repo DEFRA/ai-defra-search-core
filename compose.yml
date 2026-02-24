@@ -2,9 +2,13 @@ include:
   - ./service-compose/ai-defra-search-frontend.yml
   - ./service-compose/ai-defra-search-agent.yml
   - ./service-compose/ai-defra-search-data.yml
+  - ./service-compose/ai-defra-search-journey-tests.yml
+  - ./service-compose/ai-defra-search-chunking-etl.yml
+  - ./service-compose/ai-defra-search-perf-tests.yml
+name: ai-defra-search
 services:
   traefik:
-    image: traefik:v3.0
+    image: traefik:v3
     command:
       - "--api.insecure=true"
       - "--providers.docker=true"
@@ -22,20 +26,21 @@ services:
       - ai-defra-search
   localstack:
     image: localstack/localstack:4.9.2
+    # Traefik: http://localstack.localhost. Direct: localhost:4566 (devcontainer: host.docker.internal:4566)
     ports:
-      - 4566:4566
-      - 4510-4559:4510-4559
+      - "4566:4566"
     environment:
       DEBUG: ${DEBUG:-1}
       LS_LOG: WARN
       SERVICES: s3,sqs,sns,firehose
-      LOCALSTACK_HOST: 127.0.0.1
+      LOCALSTACK_HOST: localstack.localhost
       AWS_REGION: ${AI_DEFRA_SEARCH_AWS_REGION:-eu-west-2}
       AWS_DEFAULT_REGION: ${AI_DEFRA_SEARCH_AWS_DEFAULT_REGION:-eu-west-2}
       AWS_ACCESS_KEY_ID: ${AI_DEFRA_SEARCH_AWS_ACCESS_KEY_ID:-test}
       AWS_SECRET_ACCESS_KEY: ${AI_DEFRA_SEARCH_AWS_SECRET_ACCESS_KEY:-test}
     volumes:
       - ${TMPDIR:-/tmp}/localstack:/var/lib/localstack
+      - ./localstack-init/ready.d:/etc/localstack/init/ready.d:ro
     healthcheck:
       test:
         - CMD

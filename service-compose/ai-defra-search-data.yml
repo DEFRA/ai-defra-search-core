@@ -8,20 +8,20 @@ x-common-postgres: &common-postgres
 services:
   ai-defra-search-data-db-migrator:
     build:
-      context: ../../ai-defra-search-data/migrator
+      context: ../services/ai-defra-search-data/migrator
     container_name: ai-defra-search-data-db-migrator
     depends_on:
       postgres:
         condition: service_healthy
     environment: *common-postgres
     volumes:
-      - ../../ai-defra-search-data/changelog:/liquibase/changelog
+      - ../services/ai-defra-search-data/changelog:/liquibase/changelog
     networks:
       - ai-defra-search
 
   ai-defra-search-data:
     build:
-      context: ../../ai-defra-search-data
+      context: ../services/ai-defra-search-data
       target: development
     ports:
       - 8085:8085
@@ -39,6 +39,7 @@ services:
         condition: service_completed_successfully
     env_file:
       - "../.env"
+    entrypoint: []
     environment:
       <<: *common-postgres
       PORT: ${PORT:-8085}
@@ -47,12 +48,13 @@ services:
       LOCALSTACK_URL: ${LOCALSTACK_URL:-http://localstack:4566}
       POSTGRES_DB: ${POSTGRES_DB:-ai_defra_search_data}
       LOG_CONFIG: logging-dev.json
+    command: ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "/home/nonroot/.venv/bin/ai-defra-search-data"]
     volumes:
-      - ../../ai-defra-search-data/app:/home/nonroot/app
+      - ../services/ai-defra-search-data/app:/home/nonroot/app
     develop:
       watch:
         - action: rebuild
-          path: ../../ai-defra-search-data/pyproject.toml
+          path: ../services/ai-defra-search-data/pyproject.toml
           target: /home/nonroot/pyproject.toml
     labels:
       - "traefik.enable=true"

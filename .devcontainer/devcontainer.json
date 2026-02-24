@@ -1,0 +1,41 @@
+{
+  "name": "AI Defra Search Core",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "..",
+    "options": {
+      "platform": "linux/amd64"
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+    "ghcr.io/jsburckhardt/devcontainer-features/uv:1": {}
+  },
+  "initializeCommand": "docker network create ai-defra-search 2>/dev/null || true",
+  "runArgs": [
+    "--add-host=host.docker.internal:host-gateway",
+    "--network=ai-defra-search"
+  ],
+  "postCreateCommand": "uv sync --frozen && uv run task clone || true",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "charliermarsh.ruff",
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  },
+  // "forwardPorts": [
+  //   80,
+  //   8080,
+  //   4566,
+  //   5432,
+  //   6379,
+  //   27017
+  // ],
+  "containerEnv": {
+    "UV_PROJECT_ENVIRONMENT": ".venv-devcontainer",
+    "LOCALSTACK_ENDPOINT": "http://host.docker.internal:4566"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "services/ai-defra-search-frontend"
+    },
+    {
+      "path": "services/ai-defra-search-agent"
+    },
+    {
+      "path": "services/ai-defra-search-data"
+    },
+    {
+      "path": "services/ai-defra-search-journey-tests"
+    },
+    {
+      "path": "services/ai-defra-search-chunking-etl"
+    },
+    {
+      "path": "services/ai-defra-search-perf-tests"
+    }
+  ],
+  "settings": {
+    "files.watcherExclude": {
+      "**/.git/objects/**": true,
+      "**/node_modules/**": true,
+      "**/dist/**": true,
+      "**/build/**": true,
+      "**/.venv/**": true
+    }
+  }
+}

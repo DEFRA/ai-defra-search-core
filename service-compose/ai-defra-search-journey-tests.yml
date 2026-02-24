@@ -1,0 +1,58 @@
+# Journey/E2E tests. Run against existing stack (starts selenium-chrome + bedrock-mock):
+#   docker compose --profile journey-tests run ai-defra-search-journey-tests
+services:
+  bedrock-mock:
+    image: wiremock/wiremock:3.3.1
+    profiles:
+      - journey-tests
+    command:
+      - --global-response-templating
+      - --verbose
+    volumes:
+      - ../services/ai-defra-search-journey-tests/wiremock/mappings:/home/wiremock/mappings
+      - ../services/ai-defra-search-journey-tests/wiremock/__files:/home/wiremock/__files
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/__admin/health"]
+      interval: 5s
+      start_period: 5s
+      retries: 3
+    networks:
+      - ai-defra-search
+
+  selenium-chrome:
+    image: selenium/standalone-chrome:123.0
+    profiles:
+      - journey-tests
+    depends_on:
+      bedrock-mock:
+        condition: service_healthy
+    networks:
+      - ai-defra-search
+
+  ai-defra-search-journey-tests:
+    build:
+      context: ../services/ai-defra-search-journey-tests
+    profiles:
+      - journey-tests
+    depends_on:
+      bedrock-mock:
+        condition: service_healthy
+      selenium-chrome:
+        condition: service_started
+    entrypoint: []
+    command:
+      - sh
+      - -c
+      - |
+        until curl -sf http://bedrock-mock:8080/__admin/health; do echo "Waiting for WireMock..."; sleep 2; done
+        npm run test:docker
+        code=$$?
+        cp -r allure-results /app/reports-output/ 2>/dev/null || true
+        exit $$code
+    environment:
+      BASE_URL: http://ai-defra-search-frontend:3000
+      WIREMOCK_URL: http://bedrock-mock:8080
+    volumes:
+      - ./reports/journey-tests:/app/reports-output
+    networks:
+      - ai-defra-search

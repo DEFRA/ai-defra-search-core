@@ -17,6 +17,11 @@ http:
       service: data
       entryPoints:
         - web
+    localstack:
+      rule: "Host(`localstack.localhost`)"
+      service: localstack
+      entryPoints:
+        - web
   services:
     frontend:
       loadBalancer:
@@ -32,4 +37,9 @@ http:
       loadBalancer:
         servers:
           - url: "http://ai-defra-search-data:8085"
+        passHostHeader: true
+    localstack:
+      loadBalancer:
+        servers:
+          - url: "http://localstack:4566"
         passHostHeader: true

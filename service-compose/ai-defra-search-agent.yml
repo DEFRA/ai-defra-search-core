@@ -1,7 +1,7 @@
 services:
   ai-defra-search-agent:
     build:
-      context: ../../ai-defra-search-agent
+      context: ../services/ai-defra-search-agent
       target: development
     ports:
       - 8086:8086
@@ -10,20 +10,24 @@ services:
     depends_on:
       mongodb:
         condition: service_started
+      localstack:
+        condition: service_healthy
     env_file:
       - "../.env"
+    entrypoint: []
     environment:
       PORT: ${PORT:-8086}
       MONGO_URI: ${MONGO_URI:-mongodb://mongodb:27017/}
       HOST: ${HOST:-0.0.0.0}
       LOCALSTACK_URL: ${LOCALSTACK_URL:-http://localstack:4566}
       LOG_CONFIG: logging-dev.json
+    command: ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "/home/nonroot/.venv/bin/ai-defra-search-agent"]
     volumes:
-      - ../../ai-defra-search-agent/app:/home/nonroot/app
+      - ../services/ai-defra-search-agent/app:/home/nonroot/app
     develop:
       watch:
         - action: rebuild
-          path: ../../ai-defra-search-agent/pyproject.toml
+          path: ../services/ai-defra-search-agent/pyproject.toml
           target: /home/nonroot/pyproject.toml
     labels:
       - "traefik.enable=true"
