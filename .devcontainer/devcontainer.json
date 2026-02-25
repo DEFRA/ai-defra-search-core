@@ -20,8 +20,8 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-python.debugpy",
         "anysphere.cursorpyright",
+        "esbenp.prettier-vscode",
         "charliermarsh.ruff"
       ]
     }
