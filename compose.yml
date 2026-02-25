@@ -59,7 +59,7 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - mongodb-data:/data
+      - mongodb-data:/data/db
     restart: always
   redis:
     image: redis:7.2.3-alpine3.18
