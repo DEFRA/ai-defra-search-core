@@ -12,6 +12,13 @@ services:
         condition: service_started
       localstack:
         condition: service_healthy
+      ai-defra-search-knowledge:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 5s
+      start_period: 10s
+      retries: 3
     env_file:
       - "../.env"
     entrypoint: []

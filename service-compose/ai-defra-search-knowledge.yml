@@ -24,6 +24,11 @@ services:
       HOST: ${HOST:-0.0.0.0}
       LOG_CONFIG: logging-dev.json
     command: ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "-m", "app.main"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8085/health"]
+      interval: 5s
+      start_period: 10s
+      retries: 3
     volumes:
       - ../services/ai-defra-search-knowledge/app:/home/nonroot/app
     develop:
