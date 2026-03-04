@@ -2,6 +2,11 @@
 # Same routes as the container labels; backends use compose service names on ai-defra-search network.
 http:
   routers:
+    frontend-upload-and-scan:
+      rule: "Host(`frontend.localhost`) && PathPrefix(`/upload-and-scan/`)"
+      service: cdp-uploader
+      entryPoints:
+        - web
     frontend:
       rule: "Host(`frontend.localhost`)"
       service: frontend
@@ -53,3 +58,8 @@ http:
         servers:
           - url: "http://localstack:4566"
         passHostHeader: true
+    cdp-uploader:
+      loadBalancer:
+        servers:
+          - url: '{{ env "CDP_UPLOADER_URL" }}'
+        passHostHeader: false
