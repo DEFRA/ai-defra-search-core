@@ -1,4 +1,5 @@
 include:
+  - ./service-compose/cdp-uploader.yml
   - ./service-compose/ai-defra-search-frontend.yml
   - ./service-compose/ai-defra-search-agent.yml
   - ./service-compose/ai-defra-search-data.yml
@@ -20,6 +21,8 @@ services:
     ports:
       - "80:80"
       - "8080:8080"
+    environment:
+      CDP_UPLOADER_URL: ${CDP_UPLOADER_URL}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
@@ -45,11 +48,11 @@ services:
     healthcheck:
       test:
         - CMD
-        - curl
-        - localhost:4566
-      interval: 5s
+        - stat
+        - /tmp/READY
+      interval: 3s
       start_period: 5s
-      retries: 3
+      retries: 5
     networks:
       - ai-defra-search
   mongodb:

@@ -28,6 +28,7 @@ services:
       REDIS_HOST: redis
       USE_SINGLE_INSTANCE_CACHE: true
       DATA_API_URL: ${DATA_API_URL:-http://ai-defra-search-data:8085}
+      CDP_UPLOAD_CALLBACK_URL: http://ai-defra-search-frontend:3000/upload/callback
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=ai-defra-search"
