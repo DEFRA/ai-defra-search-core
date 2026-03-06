@@ -21,6 +21,7 @@ services:
       AWS_DEFAULT_REGION: eu-west-2
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
+      APP_BASE_URL: http://cdp-uploader:7337
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=ai-defra-search"
