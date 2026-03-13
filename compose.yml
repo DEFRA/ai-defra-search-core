@@ -2,7 +2,6 @@ include:
   - ./service-compose/cdp-uploader.yml
   - ./service-compose/ai-defra-search-frontend.yml
   - ./service-compose/ai-defra-search-agent.yml
-  - ./service-compose/ai-defra-search-data.yml
   - ./service-compose/ai-defra-search-journey-tests.yml
   - ./service-compose/ai-defra-search-chunking-etl.yml
   - ./service-compose/ai-defra-search-knowledge.yml
@@ -25,7 +24,7 @@ services:
       CDP_UPLOADER_URL: ${CDP_UPLOADER_URL}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - ${COMPOSE_PROJECT_DIR:-.}/traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
     networks:
       - ai-defra-search
   localstack:
@@ -44,7 +43,7 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AI_DEFRA_SEARCH_AWS_SECRET_ACCESS_KEY:-test}
     volumes:
       - ${TMPDIR:-/tmp}/localstack:/var/lib/localstack
-      - ./localstack-init/ready.d:/etc/localstack/init/ready.d:ro
+      - ${COMPOSE_PROJECT_DIR:-.}/localstack-init/ready.d:/etc/localstack/init/ready.d:ro
     healthcheck:
       test:
         - CMD
@@ -71,9 +70,25 @@ services:
     restart: always
     networks:
       - ai-defra-search
+  bedrock-mock:
+    image: wiremock/wiremock:3.3.1
+    command:
+      - --global-response-templating
+      - --verbose
+    volumes:
+      - ${COMPOSE_PROJECT_DIR:-.}/services/ai-defra-search-journey-tests/wiremock/mappings:/home/wiremock/mappings
+      - ${COMPOSE_PROJECT_DIR:-.}/services/ai-defra-search-journey-tests/wiremock/__files:/home/wiremock/__files
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/__admin/health"]
+      interval: 5s
+      start_period: 5s
+      retries: 3
+    networks:
+      - ai-defra-search
+
   postgres:
     build:
-      context: .
+      context: ${COMPOSE_PROJECT_DIR:-.}
       dockerfile: pgvector.Dockerfile
     ports:
       - "5432:5432"

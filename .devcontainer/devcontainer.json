@@ -46,6 +46,7 @@
   // ],
   "containerEnv": {
     "UV_PROJECT_ENVIRONMENT": ".venv-devcontainer",
-    "LOCALSTACK_ENDPOINT": "http://host.docker.internal:4566"
+    "LOCALSTACK_ENDPOINT": "http://host.docker.internal:4566",
+    "COMPOSE_PROJECT_DIR": "${localWorkspaceFolder}"
   }
 }
