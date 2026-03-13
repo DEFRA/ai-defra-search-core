@@ -9,6 +9,14 @@
   },
   "features": {
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "installMaven": "false",
+      "installGradle": "false"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22"
+    },
     "ghcr.io/jsburckhardt/devcontainer-features/uv:1": {}
   },
   "initializeCommand": "docker network create ai-defra-search 2>/dev/null || true",
@@ -16,13 +24,15 @@
     "--add-host=host.docker.internal:host-gateway",
     "--network=ai-defra-search"
   ],
-  "postCreateCommand": "uv sync --frozen && uv run task clone || true",
+  "postCreateCommand": "uv sync --frozen && uv run task clone || true && (cd services/ai-defra-search-frontend && npm ci) || true && (cd services/ai-defra-search-knowledge && uv sync) || true",
   "customizations": {
     "vscode": {
       "extensions": [
         "anysphere.cursorpyright",
         "esbenp.prettier-vscode",
-        "charliermarsh.ruff"
+        "charliermarsh.ruff",
+        "ZixuanChen.vitest-explorer",
+        "SonarSource.sonarlint-vscode"
       ]
     }
   },
