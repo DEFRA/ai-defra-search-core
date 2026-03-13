@@ -1,0 +1,12 @@
+# Override to use real AWS Bedrock instead of WireMock.
+# Use: docker compose -f compose.yml -f compose.real-bedrock.yml up
+#
+# Requires valid AWS_BEARER_TOKEN_BEDROCK in .env (Bedrock API key).
+# If you see "invalid security token", regenerate the key in the AWS console.
+services:
+  ai-defra-search-agent:
+    environment:
+      BEDROCK_ENDPOINT_URL: ""
+  ai-defra-search-knowledge:
+    environment:
+      BEDROCK_ENDPOINT_URL: ""

@@ -6,6 +6,7 @@ echo "[INIT SCRIPT] Creating buckets" >&2
 
 aws --endpoint-url=http://localhost:4566 s3 mb s3://cdp-uploader-quarantine
 aws --endpoint-url=http://localhost:4566 s3 mb s3://my-bucket
+aws --endpoint-url=http://localhost:4566 s3 mb s3://ai-defra-search-uploads-local
 
 echo "[INIT SCRIPT] Creating queues" >&2
 
