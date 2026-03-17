@@ -71,13 +71,10 @@ services:
     networks:
       - ai-defra-search
   bedrock-mock:
-    image: wiremock/wiremock:3.3.1
+    image: defradigital/ai-defra-search-aws-bedrock-stub:${AI_DEFRA_SEARCH_BEDROCK_STUB:-latest}
     command:
       - --global-response-templating
       - --verbose
-    volumes:
-      - ${COMPOSE_PROJECT_DIR:-.}/services/ai-defra-search-journey-tests/wiremock/mappings:/home/wiremock/mappings
-      - ${COMPOSE_PROJECT_DIR:-.}/services/ai-defra-search-journey-tests/wiremock/__files:/home/wiremock/__files
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/__admin/health"]
       interval: 5s
