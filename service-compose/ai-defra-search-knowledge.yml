@@ -4,7 +4,7 @@ x-common-postgres: &common-postgres
   POSTGRES_PORT: ${AI_DEFRA_SEARCH_POSTGRES_PORT:-5432}
   POSTGRES_PASSWORD: ${AI_DEFRA_SEARCH_POSTGRES_PASSWORD:-ppp}
   POSTGRES_SSL_MODE: ${AI_DEFRA_SEARCH_POSTGRES_SSL_MODE:-disable}
-  POSTGRES_DB: ${POSTGRES_DB:-ai_defra_search_data}
+  POSTGRES_DB: ${POSTGRES_DB:-ai_defra_search_knowledge}
 
 services:
   ai-defra-search-knowledge-db-migrator:
@@ -50,7 +50,7 @@ services:
       POSTGRES_PORT: ${AI_DEFRA_SEARCH_POSTGRES_PORT:-5432}
       POSTGRES_PASSWORD: ${AI_DEFRA_SEARCH_POSTGRES_PASSWORD:-ppp}
       POSTGRES_SSL_MODE: ${AI_DEFRA_SEARCH_POSTGRES_SSL_MODE:-disable}
-      POSTGRES_DB: ${POSTGRES_DB:-ai_defra_search_data}
+      POSTGRES_DB: ${POSTGRES_DB:-ai_defra_search_knowledge}
       PORT: ${PORT:-8085}
       AWS_ENDPOINT_URL: ${AWS_ENDPOINT_URL:-http://localstack:4566}
       # WireMock for local. Override with BEDROCK_ENDPOINT_URL="" via compose.real-bedrock.yml for real AWS.

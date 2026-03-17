@@ -31,6 +31,7 @@ services:
       LOCALSTACK_URL: ${LOCALSTACK_URL:-http://localstack:4566}
       LOG_CONFIG: logging-dev.json
       BEDROCK_ENDPOINT_URL: ${BEDROCK_ENDPOINT_URL:-http://bedrock-mock:8080}
+    # -Xfrozen_modules=off required for debugpy to attach to frozen stdlib modules
     command: ["python", "-Xfrozen_modules=off", "-m", "debugpy", "--listen", "0.0.0.0:5678", "/home/nonroot/.venv/bin/ai-defra-search-agent"]
     volumes:
       - ${COMPOSE_PROJECT_DIR:-..}/services/ai-defra-search-agent/app:/home/nonroot/app
