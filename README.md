@@ -18,6 +18,7 @@ This repository contains scripts and documentation to support AI Defra Search lo
 | [ai-defra-search-agent](https://github.com/DEFRA/ai-defra-search-agent) | Backend API | Python |
 | [ai-defra-search-data](https://github.com/DEFRA/ai-defra-search-data) | Data Service | Python |
 | [ai-defra-search-perf-tests](https://github.com/DEFRA/ai-defra-search-perf-tests) | Performance Tests | JMeter |
+| [ai-defra-search-aws-bedrock-stub](https://github.com/DEFRA/ai-defra-search-aws-bedrock-stub) | Bedrock WireMock stub | Docker |
 
 ## Local Development
 
@@ -43,6 +44,7 @@ Layout after clone:
 ```
 ai-defra-search-core/
   services/
+    ai-defra-search-aws-bedrock-stub/
     ai-defra-search-frontend/
     ai-defra-search-agent/
     ai-defra-search-data/

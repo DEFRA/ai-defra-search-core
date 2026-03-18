@@ -1,0 +1,22 @@
+# WireMock stub for AWS Bedrock API. Built from services/ai-defra-search-aws-bedrock-stub.
+# Repo: https://github.com/DEFRA/ai-defra-search-aws-bedrock-stub
+services:
+  bedrock-mock:
+    build:
+      context: ${COMPOSE_PROJECT_DIR:-.}/services/ai-defra-search-aws-bedrock-stub
+    image: ai-defra-search-aws-bedrock-stub:local
+    command:
+      - --global-response-templating
+      - --verbose
+      - --port
+      - "8080"
+    environment:
+      BEDROCK_STUB_EMBED_DELAY_MS: 50
+      BEDROCK_STUB_CONVERSE_DELAY_MS: 50
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/__admin/health"]
+      interval: 5s
+      start_period: 5s
+      retries: 3
+    networks:
+      - ai-defra-search
