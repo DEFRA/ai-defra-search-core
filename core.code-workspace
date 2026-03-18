@@ -1,29 +1,32 @@
 {
   "folders": [
     {
-      "path": "."
+      "path": ".",
     },
     {
-      "path": "services/ai-defra-search-frontend"
+      "path": "services/ai-defra-search-frontend",
     },
     {
-      "path": "services/ai-defra-search-agent"
+      "path": "services/ai-defra-search-agent",
     },
     {
-      "path": "services/ai-defra-search-data"
+      "path": "services/ai-defra-search-data",
     },
     {
-      "path": "services/ai-defra-search-journey-tests"
+      "path": "services/ai-defra-search-journey-tests",
     },
     {
-      "path": "services/ai-defra-search-chunking-etl"
+      "path": "services/ai-defra-search-chunking-etl",
     },
     {
-      "path": "services/ai-defra-search-perf-tests"
+      "path": "services/ai-defra-search-perf-tests",
     },
     {
-      "path": "services/ai-defra-search-knowledge"
-    }
+      "path": "services/ai-defra-search-knowledge",
+    },
+    {
+      "path": "services/ai-defra-search-aws-bedrock-stub",
+    },
   ],
   "settings": {
     "files.watcherExclude": {
@@ -31,7 +34,7 @@
       "**/node_modules/**": true,
       "**/dist/**": true,
       "**/build/**": true,
-      "**/.venv/**": true
-    }
-  }
+      "**/.venv/**": true,
+    },
+  },
 }

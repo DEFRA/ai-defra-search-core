@@ -1,4 +1,5 @@
 include:
+  - ./service-compose/ai-defra-search-aws-bedrock-stub.yml
   - ./service-compose/cdp-uploader.yml
   - ./service-compose/ai-defra-search-frontend.yml
   - ./service-compose/ai-defra-search-agent.yml
@@ -68,18 +69,6 @@ services:
     ports:
       - 6379:6379
     restart: always
-    networks:
-      - ai-defra-search
-  bedrock-mock:
-    image: defradigital/ai-defra-search-aws-bedrock-stub:${AI_DEFRA_SEARCH_BEDROCK_STUB:-latest}
-    command:
-      - --global-response-templating
-      - --verbose
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/__admin/health"]
-      interval: 5s
-      start_period: 5s
-      retries: 3
     networks:
       - ai-defra-search
 
