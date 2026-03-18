@@ -84,6 +84,20 @@ To stop the services, run the following command:
 docker-compose down
 ```
 
+**Bedrock: WireMock vs real AWS**
+
+By default, the stack uses WireMock (`bedrock-mock`) to stub Bedrock. To use real AWS Bedrock:
+
+```bash
+docker compose -f compose.yml -f compose.real-bedrock.yml up
+```
+
+Requires valid `AWS_BEARER_TOKEN_BEDROCK` (Bedrock API key) in `.env`. If you see `UnrecognizedClientException: The security token included in the request is invalid`, the token is expired or revoked—regenerate it in the [AWS Bedrock console](https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys-use.html).
+
+**Devcontainer**
+
+The devcontainer sets `COMPOSE_PROJECT_DIR` to the host workspace path so `docker compose` works from both inside the devcontainer and on the host (Docker-outside-of-Docker). Rebuild the devcontainer after pulling changes that touch `.devcontainer/devcontainer.json`.
+
 The services can still be started individually directly from their respective repositories. However, this project is intended to streamline local development by having a common entry point for all services.
 
 ## Network

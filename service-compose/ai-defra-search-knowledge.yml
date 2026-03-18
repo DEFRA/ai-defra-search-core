@@ -1,7 +1,28 @@
+x-common-postgres: &common-postgres
+  POSTGRES_HOST: ${AI_DEFRA_SEARCH_POSTGRES_HOST:-postgres}
+  POSTGRES_USER: ${AI_DEFRA_SEARCH_POSTGRES_USER:-postgres}
+  POSTGRES_PORT: ${AI_DEFRA_SEARCH_POSTGRES_PORT:-5432}
+  POSTGRES_PASSWORD: ${AI_DEFRA_SEARCH_POSTGRES_PASSWORD:-ppp}
+  POSTGRES_SSL_MODE: ${AI_DEFRA_SEARCH_POSTGRES_SSL_MODE:-disable}
+  POSTGRES_DB: ${POSTGRES_DB:-ai_defra_search_knowledge}
+
 services:
+  ai-defra-search-knowledge-db-migrator:
+    build:
+      context: ${COMPOSE_PROJECT_DIR:-..}/services/ai-defra-search-knowledge/migrator
+    container_name: ai-defra-search-knowledge-db-migrator
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment: *common-postgres
+    volumes:
+      - ${COMPOSE_PROJECT_DIR:-..}/services/ai-defra-search-knowledge/changelog:/liquibase/changelog
+    networks:
+      - ai-defra-search
+
   ai-defra-search-knowledge:
     build:
-      context: ../services/ai-defra-search-knowledge
+      context: ${COMPOSE_PROJECT_DIR:-..}/services/ai-defra-search-knowledge
       target: development
     ports:
       - 8087:8085
@@ -14,12 +35,26 @@ services:
         condition: service_healthy
       mongodb:
         condition: service_started
+      postgres:
+        condition: service_healthy
+      ai-defra-search-knowledge-db-migrator:
+        condition: service_completed_successfully
+      bedrock-mock:
+        condition: service_healthy
     env_file:
       - "../.env"
     entrypoint: []
     environment:
+      POSTGRES_HOST: ${AI_DEFRA_SEARCH_POSTGRES_HOST:-postgres}
+      POSTGRES_USER: ${AI_DEFRA_SEARCH_POSTGRES_USER:-postgres}
+      POSTGRES_PORT: ${AI_DEFRA_SEARCH_POSTGRES_PORT:-5432}
+      POSTGRES_PASSWORD: ${AI_DEFRA_SEARCH_POSTGRES_PASSWORD:-ppp}
+      POSTGRES_SSL_MODE: ${AI_DEFRA_SEARCH_POSTGRES_SSL_MODE:-disable}
+      POSTGRES_DB: ${POSTGRES_DB:-ai_defra_search_knowledge}
       PORT: ${PORT:-8085}
       AWS_ENDPOINT_URL: ${AWS_ENDPOINT_URL:-http://localstack:4566}
+      # WireMock for local. Override with BEDROCK_ENDPOINT_URL="" via compose.real-bedrock.yml for real AWS.
+      BEDROCK_ENDPOINT_URL: http://bedrock-mock:8080
       MONGO_URI: ${MONGO_URI:-mongodb://mongodb:27017/}
       HOST: ${HOST:-0.0.0.0}
       LOG_CONFIG: logging-dev.json
@@ -30,11 +65,11 @@ services:
       start_period: 10s
       retries: 3
     volumes:
-      - ../services/ai-defra-search-knowledge/app:/home/nonroot/app
+      - ${COMPOSE_PROJECT_DIR:-..}/services/ai-defra-search-knowledge/app:/home/nonroot/app
     develop:
       watch:
         - action: rebuild
-          path: ../services/ai-defra-search-knowledge/pyproject.toml
+          path: ${COMPOSE_PROJECT_DIR:-..}/services/ai-defra-search-knowledge/pyproject.toml
           target: /home/nonroot/pyproject.toml
     labels:
       - "traefik.enable=true"

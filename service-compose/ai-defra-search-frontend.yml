@@ -2,7 +2,7 @@ services:
   ai-defra-search-frontend:
     build:
       target: development
-      context: ../services/ai-defra-search-frontend
+      context: ${COMPOSE_PROJECT_DIR:-..}/services/ai-defra-search-frontend
     ports:
       - '3000:3000'
     links:
@@ -20,14 +20,17 @@ services:
     env_file:
       - "../.env"
     volumes:
-      - ../services/ai-defra-search-frontend/src/:/home/node/src
-      - ../services/ai-defra-search-frontend/package.json:/home/node/package.json
+      - ${COMPOSE_PROJECT_DIR:-..}/services/ai-defra-search-frontend/src/:/home/node/src
+      - ${COMPOSE_PROJECT_DIR:-..}/services/ai-defra-search-frontend/package.json:/home/node/package.json
     environment:
       PORT: 3000
       NODE_ENV: development
       REDIS_HOST: redis
       USE_SINGLE_INSTANCE_CACHE: true
-      DATA_API_URL: ${DATA_API_URL:-http://ai-defra-search-data:8085}
+      KNOWLEDGE_API_URL: http://ai-defra-search-knowledge:8085
+      CDP_UPLOADER_URL: ${CDP_UPLOADER_URL:-http://cdp-uploader:7337}
+      CDP_UPLOAD_CALLBACK_URL: ${CDP_UPLOAD_CALLBACK_URL:-http://ai-defra-search-frontend:3000/upload/callback}
+      UPLOAD_BUCKET_NAME: ${UPLOAD_BUCKET_NAME:-my-bucket}
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=ai-defra-search"

@@ -9,6 +9,7 @@ services:
       redis:
         condition: service_started
     environment:
+      AWS_EMF_AGENT_ENDPOINT: ""  # disable CloudWatch EMF in local (no agent on 25888)
       PORT: 7337
       NODE_ENV: development
       REDIS_HOST: redis

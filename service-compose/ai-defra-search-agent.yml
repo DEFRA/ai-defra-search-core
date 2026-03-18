@@ -1,7 +1,7 @@
 services:
   ai-defra-search-agent:
     build:
-      context: ../services/ai-defra-search-agent
+      context: ${COMPOSE_PROJECT_DIR:-..}/services/ai-defra-search-agent
       target: development
     ports:
       - 8086:8086
@@ -13,6 +13,8 @@ services:
       localstack:
         condition: service_healthy
       ai-defra-search-knowledge:
+        condition: service_healthy
+      bedrock-mock:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
@@ -28,13 +30,15 @@ services:
       HOST: ${HOST:-0.0.0.0}
       LOCALSTACK_URL: ${LOCALSTACK_URL:-http://localstack:4566}
       LOG_CONFIG: logging-dev.json
-    command: ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "/home/nonroot/.venv/bin/ai-defra-search-agent"]
+      BEDROCK_ENDPOINT_URL: ${BEDROCK_ENDPOINT_URL:-http://bedrock-mock:8080}
+    # -Xfrozen_modules=off required for debugpy to attach to frozen stdlib modules
+    command: ["python", "-Xfrozen_modules=off", "-m", "debugpy", "--listen", "0.0.0.0:5678", "/home/nonroot/.venv/bin/ai-defra-search-agent"]
     volumes:
-      - ../services/ai-defra-search-agent/app:/home/nonroot/app
+      - ${COMPOSE_PROJECT_DIR:-..}/services/ai-defra-search-agent/app:/home/nonroot/app
     develop:
       watch:
         - action: rebuild
-          path: ../services/ai-defra-search-agent/pyproject.toml
+          path: ${COMPOSE_PROJECT_DIR:-..}/services/ai-defra-search-agent/pyproject.toml
           target: /home/nonroot/pyproject.toml
     labels:
       - "traefik.enable=true"
