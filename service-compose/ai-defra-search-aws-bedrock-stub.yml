@@ -3,7 +3,7 @@
 services:
   bedrock-mock:
     build:
-      context: ${COMPOSE_PROJECT_DIR:-.}/services/ai-defra-search-aws-bedrock-stub
+      context: ${COMPOSE_PROJECT_DIR:-..}/services/ai-defra-search-aws-bedrock-stub
     image: ai-defra-search-aws-bedrock-stub:local
     command:
       - --global-response-templating
