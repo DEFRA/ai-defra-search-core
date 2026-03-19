@@ -16,7 +16,8 @@ This repository contains scripts and documentation to support AI Defra Search lo
 |---------|------|----------|
 | [ai-defra-search-frontend](https://github.com/DEFRA/ai-defra-search-frontend) | Frontend | JavaScript |
 | [ai-defra-search-agent](https://github.com/DEFRA/ai-defra-search-agent) | Backend API | Python |
-| [ai-defra-search-data](https://github.com/DEFRA/ai-defra-search-data) | Data Service | Python |
+| [ai-defra-search-knowledge](https://github.com/DEFRA/ai-defra-search-knowledge) | Knowledge management, ingestion, vector search | Python |
+| [ai-defra-search-journey-tests](https://github.com/DEFRA/ai-defra-search-journey-tests) | End-to-end journey tests | Playwright |
 | [ai-defra-search-perf-tests](https://github.com/DEFRA/ai-defra-search-perf-tests) | Performance Tests | JMeter |
 | [ai-defra-search-aws-bedrock-stub](https://github.com/DEFRA/ai-defra-search-aws-bedrock-stub) | Bedrock WireMock stub | Docker |
 
@@ -45,10 +46,13 @@ Layout after clone:
 ai-defra-search-core/
   services/
     ai-defra-search-aws-bedrock-stub/
-    ai-defra-search-frontend/
     ai-defra-search-agent/
-    ai-defra-search-data/
+    ai-defra-search-chunking-etl/
+    ai-defra-search-frontend/
+    ai-defra-search-journey-tests/
+    ai-defra-search-knowledge/
     ai-defra-search-perf-tests/
+    cdp-uploader/
   compose.yml
   traefik/
   scripts/
