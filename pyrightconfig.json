@@ -2,7 +2,6 @@
   "include": [
     "scripts",
     "services/ai-defra-search-agent",
-    "services/ai-defra-search-data",
     "services/ai-defra-search-chunking-etl",
     "services/ai-defra-search-perf-tests",
     "services/ai-defra-search-knowledge"

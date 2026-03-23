@@ -41,8 +41,8 @@ Additional repositories in the `services/` directory:
 ## Knowledge (`ai-defra-search-knowledge`)
 
 - Tech stack: Python, FastAPI, UV, pgvector, Liquibase.
-- `app/knowledge_group/`: CRUD for knowledge groups and sources (MongoDB).
-- `app/ingest/`: Reads pre-chunked JSONL from S3, generates embeddings via Bedrock, stores in Postgres (pgvector).
+- `app/knowledge_group/`: Knowledge groups in MongoDB (`POST /knowledge-group`, `GET /knowledge-groups`; scoped by `user-id` header).
+- `app/document/` + `app/ingest/`: Register uploads (`POST /documents`), fetch from S3, chunk (JSONL / PDF / DOCX / PPTX), embed via Bedrock, store in Postgres (pgvector).
 - `app/rag/`: Semantic search via `POST /rag/search`.
 - DB migrations run via a Liquibase migrator before app startup.
 
@@ -64,10 +64,10 @@ Additional repositories in the `services/` directory:
 
 ## Data Flow: Knowledge Ingestion
 
-1. Admin creates knowledge group via `POST /knowledge/groups`, adds sources via `PATCH /knowledge/groups/{id}/sources`.
-2. Admin triggers `POST /knowledge/groups/{id}/ingest`.
-3. Knowledge service reads pre-chunked JSONL from S3 (LocalStack), generates embeddings via Bedrock, stores vectors in Postgres.
-4. Admin activates snapshot via `PATCH /snapshots/{id}/activate` to make it available for RAG.
+1. Client creates a knowledge group via `POST /knowledge-group` (with `user-id`).
+2. Client registers files via `POST /documents` (includes `knowledge_group_id`, `s3_key`, upload ids); ingest runs asynchronously.
+3. Knowledge service reads objects from S3, extracts chunks, generates embeddings via Bedrock, stores vectors in Postgres.
+4. RAG is available via `POST /rag/search` for the same `knowledge_group_ids` once ingest has completed (document `status` is `ready`).
 
 ## Service Boundaries
 

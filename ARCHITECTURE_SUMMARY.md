@@ -5,8 +5,10 @@ The system is a microservices-based AI search application composed of four main 
 
 *   **Core (`ai-defra-search-core`)**: Infrastructure and orchestration.
 *   **Agent (`ai-defra-search-agent`)**: Backend API and AI logic.
-*   **Data (`ai-defra-search-data`)**: Knowledge management, ingestion, and vector search.
+*   **Knowledge (`ai-defra-search-knowledge`)**: Knowledge groups, document ingest, embeddings, and vector search for RAG.
 *   **Frontend (`ai-defra-search-frontend`)**: User interface and session management.
+
+(Legacy `ai-defra-search-data` is not used by the default core compose stack; local dev follows `service-compose/ai-defra-search-knowledge.yml`.)
 
 ## Repository Details
 
@@ -18,19 +20,18 @@ The system is a microservices-based AI search application composed of four main 
     *   **Databases**: MongoDB (Port 27017), Redis (Port 6379), Postgres (Port 5432).
     *   **AWS Mock**: LocalStack (Port 4566).
 
-### 2. Data (`ai-defra-search-data`)
-*   **Role**: Knowledge management, document ingestion, and vector search for RAG.
+### 2. Knowledge (`ai-defra-search-knowledge`)
+*   **Role**: Knowledge groups, document registration, ingest from S3 (chunk → embed → store), and semantic search for RAG.
 *   **Tech Stack**: Python, FastAPI, UV, pgvector, Liquibase.
-*   **Port**: 8085.
-*   **Traefik**: `data.localhost`.
+*   **Port**: `8085` in-container; default compose publishes host **`8087:8085`** (`service-compose/ai-defra-search-knowledge.yml`).
+*   **Traefik**: `knowledge.localhost`.
 *   **Key Paths**:
-    *   `app/knowledge_management/`: Knowledge groups and sources (MongoDB).
-    *   `app/ingestion/`: Ingests pre-chunked S3 data, generates embeddings via Bedrock, stores vectors.
-    *   `app/snapshot/`: Versioned snapshots; semantic search via `POST /snapshots/query`.
-    *   `app/infra/mcp_server.py`: MCP server for AI tool integration.
-*   **Data Persistence**: Postgres (pgvector for embeddings), MongoDB (knowledge group metadata).
-*   **Dependencies**: Postgres, MongoDB, LocalStack (S3), Bedrock (embeddings).
-*   **DB Migrations**: Liquibase (`ai-defra-search-data-db-migrator`) runs before app startup.
+    *   `app/knowledge_group/`: Create/list knowledge groups (`POST /knowledge-group`, `GET /knowledge-groups`; `user-id` header).
+    *   `app/document/`: Register uploads (`POST /documents`), ingest status; ingest runs via `app/ingest/` (JSONL plus PDF/DOCX/PPTX extractors).
+    *   `app/rag/`: `POST /rag/search` — embed query (Bedrock), vector search in Postgres, enrich from MongoDB documents.
+*   **Data Persistence**: Postgres (`knowledge_vectors` / pgvector), MongoDB (`knowledgeGroups`, `documents`).
+*   **Dependencies**: Postgres, MongoDB, LocalStack (S3 uploads), Bedrock (embeddings; WireMock/bedrock-mock in local compose).
+*   **DB Migrations**: Liquibase (`ai-defra-search-knowledge-db-migrator`) runs before app startup.
 
 ### 3. Frontend (`ai-defra-search-frontend`)
 *   **Role**: Web server serving the UI.
@@ -50,21 +51,21 @@ The system is a microservices-based AI search application composed of four main 
     *   `app/chat/service.py`: Orchestrates conversation flow.
     *   `app/bedrock/service.py`: Interfaces with AWS Bedrock (or LocalStack).
 *   **Data Persistence**: Stores conversation history in MongoDB.
-*   **Integration**: Calls **Data** `POST /snapshots/query` for RAG (via `KNOWLEDGE_BASE_URL`, `KnowledgeRetriever`).
+*   **Integration**: Calls **Knowledge** `POST /rag/search` for RAG (via `KNOWLEDGE_BASE_URL`, `KnowledgeRetriever`).
 
 ## Data Flow (Chat Request)
 1.  **User** submits question on Frontend.
 2.  **Frontend** (`startPostController`) sends `POST /chat` to Agent.
 3.  **Agent** (`ChatService`) retrieves/creates conversation in **MongoDB**.
-4.  **Agent** (optional RAG) calls **Data** `POST /snapshots/query` for relevant docs (via `KnowledgeRetriever`).
+4.  **Agent** (optional RAG) calls **Knowledge** `POST /rag/search` for relevant chunks (via `KnowledgeRetriever`).
 5.  **Agent** invokes **AWS Bedrock** (via `BedrockInferenceService`) for LLM response (with RAG context if available).
 6.  **Agent** saves updated history to **MongoDB**.
 7.  **Agent** returns response to **Frontend**.
 8.  **Frontend** renders response via Nunjucks.
 
 ## Data Flow (Knowledge Ingestion)
-1.  **Admin** creates knowledge group via `POST /knowledge/groups`, adds sources via `PATCH /knowledge/groups/{id}/sources`.
-2.  **Admin** triggers `POST /knowledge/groups/{id}/ingest`.
-3.  **Data** reads pre-chunked JSONL from **S3** (LocalStack), generates embeddings via **Bedrock**, stores vectors in **Postgres** (pgvector).
-4.  Snapshot created; activate via `PATCH /snapshots/{id}/activate` for RAG use.
+1.  **Client** creates a knowledge group via **`POST /knowledge-group`** (with `user-id`).
+2.  **Client** registers files with **`POST /documents`** (metadata including `knowledge_group_id`, `s3_key`, `cdp_upload_id`).
+3.  **Knowledge** loads each object from **S3**, extracts chunks (JSONL or office/PDF), generates embeddings via **Bedrock**, writes rows to **Postgres** (pgvector). Document status in **MongoDB** moves `not_started` → `in_progress` → `ready` / `failed`.
+4.  **RAG** uses **`POST /rag/search`** with `knowledge_group_ids` — no separate snapshot activation step.
 
