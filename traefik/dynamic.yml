@@ -17,11 +17,6 @@ http:
       service: agent
       entryPoints:
         - web
-    data:
-      rule: "Host(`data.localhost`)"
-      service: data
-      entryPoints:
-        - web
     knowledge:
       rule: "Host(`knowledge.localhost`)"
       service: knowledge
@@ -42,11 +37,6 @@ http:
       loadBalancer:
         servers:
           - url: "http://ai-defra-search-agent:8086"
-        passHostHeader: true
-    data:
-      loadBalancer:
-        servers:
-          - url: "http://ai-defra-search-data:8085"
         passHostHeader: true
     knowledge:
       loadBalancer:
