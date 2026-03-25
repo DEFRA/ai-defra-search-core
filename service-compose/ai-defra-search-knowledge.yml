@@ -52,7 +52,13 @@ services:
       POSTGRES_SSL_MODE: ${AI_DEFRA_SEARCH_POSTGRES_SSL_MODE:-disable}
       POSTGRES_DB: ${POSTGRES_DB:-ai_defra_search_knowledge}
       PORT: ${PORT:-8085}
-      AWS_ENDPOINT_URL: ${AWS_ENDPOINT_URL:-http://localstack:4566}
+      # S3-only LocalStack URL. Compose reads host AWS_ENDPOINT_URL for interpolation only;
+      # AWS_ENDPOINT_URL is cleared in the container so botocore does not route bedrock-runtime
+      # to LocalStack. Override S3 URL with LOCALSTACK_S3_ENDPOINT_URL in .env if needed.
+      LOCALSTACK_S3_ENDPOINT_URL: ${LOCALSTACK_S3_ENDPOINT_URL:-${AWS_ENDPOINT_URL:-http://localstack:4566}}
+      AWS_ENDPOINT_URL: ""
+      LOCALSTACK_ACCESS_KEY: ${LOCALSTACK_ACCESS_KEY:-test}
+      LOCALSTACK_SECRET_ACCESS_KEY: ${LOCALSTACK_SECRET_ACCESS_KEY:-test}
       # WireMock for local. Override with BEDROCK_ENDPOINT_URL="" via compose.real-bedrock.yml for real AWS.
       BEDROCK_ENDPOINT_URL: http://bedrock-mock:8080
       MONGO_URI: ${MONGO_URI:-mongodb://mongodb:27017/}

@@ -1,12 +1,38 @@
 # Override to use real AWS Bedrock instead of WireMock.
 # Use: docker compose -f compose.yml -f compose.real-bedrock.yml up
 #
-# Requires valid AWS_BEARER_TOKEN_BEDROCK in .env (Bedrock API key).
-# If you see "invalid security token", regenerate the key in the AWS console.
+# Agent: set model config in repo-root .env (loaded via env_file).
+#
+# Authentication: boto3 default chain; botocore reads AWS_BEARER_TOKEN_BEDROCK for Bedrock.
+# Do not set AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY in app .env for LocalStack — use
+# SQS_* (agent compose) and LOCALSTACK_* (knowledge compose) so they do not shadow the bearer.
+# Knowledge: do not set AWS_ENDPOINT_URL in the container — it is a global botocore override
+# and would send bedrock-runtime to LocalStack; S3 uses LOCALSTACK_S3_ENDPOINT_URL only.
+#
+# Model JSON + discovery (pick one):
+#
+#   A) Inference profile ARNs (matches production): set bedrockModelId to the full
+#      application inference profile ARN. Keep AWS_BEDROCK_USE_DISCOVERY=true (default
+#      below) so ListInferenceProfiles validates those ARNs.
+#
+#   B) On-demand foundation model IDs (e.g. anthropic.claude-3-7-sonnet-...): put those
+#      in modelId / bedrockModelId as today. Set AWS_BEDROCK_USE_DISCOVERY=false in .env
+#      — discovery only understands inference profiles, not foundation model IDs.
+#
+# Required in .env for the agent:
+#   - AWS_REGION
+#   - AWS_BEDROCK_AVAILABLE_GENERATION_MODELS — JSON (modelId, name, description, bedrockModelId)
+#   - AWS_BEDROCK_DEFAULT_GENERATION_MODEL — must match a modelId in that JSON
+#
+# Optional in .env:
+#   - AWS_BEDROCK_INFERENCE_PROFILE_ALLOWLIST — only when discovery is true
+#
+# Default: discovery on; override with AWS_BEDROCK_USE_DISCOVERY=false in .env for (B).
 services:
   ai-defra-search-agent:
     environment:
       BEDROCK_ENDPOINT_URL: ""
+      AWS_BEDROCK_USE_DISCOVERY: ${AWS_BEDROCK_USE_DISCOVERY:-true}
   ai-defra-search-knowledge:
     environment:
       BEDROCK_ENDPOINT_URL: ""
